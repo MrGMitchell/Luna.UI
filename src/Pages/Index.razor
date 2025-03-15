@@ -1,0 +1,51 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+@if (usercards is null)
+{
+    <p>Unable to get branches from GitHub. Please try again later.</p>
+}
+else
+{
+    <div class="container-sm">
+        <div class="row">
+            @foreach (var userCard in usercards)
+            {
+                <div class="col">
+                    <UserCardComponent UserCard="userCard" />
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private readonly IUserCardService? _userCardService;
+    private IEnumerable<UserCard>? usercards;
+    private string? exceptionMessage;
+    private bool shouldRender;
+    protected override bool ShouldRender() => shouldRender;
+
+    public Index(IUserCardService userCardService)
+    {
+        _userCardService = userCardService;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (_userCardService != null)
+            {
+                usercards = await _userCardService.GetUserCardsAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            exceptionMessage = ex.Message;
+        }
+
+        shouldRender = true;
+    }
+}

@@ -1,0 +1,130 @@
+@page "/UserCardCompenent"
+
+<PageTitle>User Card</PageTitle>
+
+<Modal @ref="modal" IsVerticallyCentered="true" IsScrollable="true">
+    <FooterTemplate>
+        <div class="conatiner w-100">
+            <div class="row">
+                <div class="d-grid col">
+                    <Button Color="ButtonColor.Success" @onclick="OnShowAddNewItemClick">Add</Button>
+                </div>
+                <div class="d-grid col">
+                    <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Save/Close</Button>
+                </div>
+            </div>
+        </div>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="modalIncome" IsVerticallyCentered="true" IsScrollable="true">
+    <FooterTemplate>
+        <div class="conatiner w-100">
+            <div class="row">
+                <div class="d-grid col">
+                    <Button Color="ButtonColor.Success" @onclick="OnHideIncomeModalClick">Save/Close</Button>
+                </div>
+            </div>
+        </div>
+    </FooterTemplate>
+</Modal>
+
+<Card>
+    <CardHeader>
+        @userCard?.Name @userCard?.Month @userCard?.Year
+    </CardHeader>
+    <CardBody>
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div style="font-weight: bold;">Current Balance</div>
+            <div><Button>@String.Format("{0:C}", userCard?.CurrentBalance ?? 0)</Button></div>
+        </div>
+        <div style="width: 100%; display: flex; justify-content: space-evenly;">
+            <div>
+                <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                    <div style="font-weight: bold;">Paid</div>
+                    <div><Button>@String.Format("{0:C}", userCard?.ExpensesPaid ?? 0)</Button></div>
+                </div>
+            </div>
+            <div>
+                <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                    <div style="font-weight: bold;">Unpaid</div>
+                    <div><Button>@String.Format("{0:C}", @userCard?.ExpensesUnpaid ?? 0)</Button></div>
+                </div>
+            </div>
+        </div>
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div style="font-weight: bold;">Ending Balance</div>
+            <div><Button>@String.Format("{0:C}", @userCard?.EndingBalance ?? 0)</Button></div>
+        </div>
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div style="font-weight: bold;">Monthly Surplus</div>
+            <div><Button>@String.Format("{0:C}", @userCard?.Surplus ?? 0)</Button></div>
+        </div>
+        <div class="conatiner">
+            <div class="row">
+                <div class="d-grid col">
+                    <Button Color="ButtonColor.Primary" @onclick="OnShowIncomeModalClick">Income</Button>
+                </div>
+                <div class="d-grid col">
+                    <Button Color="ButtonColor.Primary" @onclick="OnShowExpenseModalClick">Expenses</Button>
+                </div>
+            </div>
+        </div>
+    </CardBody>
+</Card>
+
+@code {
+    private Modal? modal;
+    private Modal? modalIncome;
+    private readonly IUserCardService? _userCardService;
+
+    [Parameter]
+    public UserCard? userCard { get; set; }
+
+    public UserCardComponent(IUserCardService userCardService)
+    {
+        _userCardService = userCardService;
+    }
+
+    private async Task OnShowIncomeModalClick()
+    {
+
+        var parameters = new Dictionary<string, object>();
+
+        if (userCard?.Incomes != null)
+        {
+            parameters.Add("incomes", userCard.Incomes);
+        }
+
+        await modal!.ShowAsync<IncomeComponent>("Income", parameters: parameters);
+    }
+
+    private async Task OnShowExpenseModalClick()
+    {
+        var parameters = new Dictionary<string, object>();
+
+        if (userCard?.Expenses != null)
+        {
+            parameters.Add("expenses", userCard.Expenses);
+        }
+
+        await modal!.ShowAsync<ExpenseComponent>("Expenses", parameters: parameters);
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await modal!.HideAsync();
+    }
+
+    private async Task OnHideIncomeModalClick()
+    {
+        await modalIncome!.HideAsync();
+    }
+
+    private async Task OnShowAddNewItemClick()
+    {
+        var parameters = new Dictionary<string, object>();
+
+        await modalIncome!.ShowAsync<IncomeComponent>("Add Additional Income", parameters: parameters);
+    }
+}

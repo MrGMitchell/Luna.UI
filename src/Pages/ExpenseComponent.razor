@@ -1,0 +1,40 @@
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        <label>Description</label>
+    </div>
+    <div>
+        <label>Due Date</label>
+    </div>
+    <div>
+        <label>Amount</label>
+    </div>
+    <div>
+        <label>Paid?</label>
+    </div>
+</div>
+@if (expenses != null)
+{
+    foreach (var expense in expenses)
+    {
+        <div style="display: flex; justify-content: space-between;">
+            <div>
+                <InputText TValue="string?" @bind-Value="@expense.ExpenseDescription" class="form-control" />
+            </div>
+            <div>
+                <DateInput TValue="DateOnly ?" @bind-Value="@expense.ExpenseDueDate" Placeholder="Enter Date" />
+            </div>
+            <div>
+                <CurrencyInput TValue="decimal?" @bind-Value="@expense.Amount" Placeholder="Enter amount" Locale="en-US"
+                    MinimumFractionDigits="0" />
+            </div>
+            <div>
+                <Switch @bind-Value="@expense.ExpenseStatus" />
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public List<Expense>? expenses { get; set; }
+}

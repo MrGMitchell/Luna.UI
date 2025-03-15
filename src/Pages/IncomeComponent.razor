@@ -1,0 +1,53 @@
+<div class="container">
+    <div class="row">
+        <div class="col-6">Pay Date</div>
+        <div class="col-4">Amount</div>
+        <div class="col-2"></div>
+    </div>
+
+@if (incomes != null)
+{
+    foreach (var income in incomes)
+    {
+        <div class="row">
+            <div class="col-6">
+                <DateInput TValue="DateOnly ?" @bind-Value="@income.PayDate" Placeholder="Enter Date" />
+            </div>
+            <div class="col-4">
+                <CurrencyInput TValue="decimal?" @bind-Value="@income.Amount" Placeholder="Enter amount" Locale="en-US"
+                    MinimumFractionDigits="0" />
+            </div>
+            <div class="col-2"><Button Color="ButtonColor.Danger" Outline="true">
+                    <Icon Name="IconName.Trash" />
+                </Button></div>
+        </div>
+    }
+}
+else
+{
+    @if (income != null)
+    {
+        <div class="row">
+            <div class="col">
+                <DateInput TValue="DateOnly ?" @bind-Value="@income.PayDate" Placeholder="Enter Date" />
+            </div>
+            <div class="col">
+                <CurrencyInput TValue="decimal?" @bind-Value="@income.Amount" Placeholder="Enter amount" Locale="en-US"
+                    MinimumFractionDigits="0" />
+            </div>
+        </div>
+    }
+}
+</div>
+
+@code {
+    [Parameter]
+    public List<Income>? incomes { get; set; }
+    public Income? income { get; set; }
+
+    public IncomeComponent()
+    {
+        income = new Income();
+        income.PayDate = DateOnly.FromDateTime(DateTime.Now);
+    }
+}
